@@ -12,7 +12,7 @@ export class FabricjsEditorComponent implements AfterViewInit {
   private canvas: fabric.Canvas;
   public props = {
     canvasFill: '#ffffff',
-    canvasImage: '',
+    canvasImage: '', 
     id: null,
     opacity: null,
     fill: null,
@@ -57,7 +57,7 @@ export class FabricjsEditorComponent implements AfterViewInit {
       'object:selected': (e) => {
 
         const selectedObject = e.target;
-        this.selected = selectedObject;
+        this.selected = selectedObject;  
         selectedObject.hasRotatingPoint = true;
         selectedObject.transparentCorners = false;
         selectedObject.cornerColor = 'rgba(255, 87, 34, 0.7)';
@@ -68,6 +68,7 @@ export class FabricjsEditorComponent implements AfterViewInit {
 
           this.getId();
           this.getOpacity();
+        
 
           switch (selectedObject.type) {
             case 'rect':
@@ -120,7 +121,7 @@ export class FabricjsEditorComponent implements AfterViewInit {
   // Block "Add text"
 
   addText() {
-    if (this.textString) {
+    if (this.textString) { 
       const text = new fabric.IText(this.textString, {
         left: 10,
         top: 10,
@@ -140,62 +141,6 @@ export class FabricjsEditorComponent implements AfterViewInit {
     }
   }
 
-  // Block "Add images"
-
-  getImgPolaroid(event: any) {
-    const el = event.target;
-    fabric.loadSVGFromURL(el.src, (objects, options) => {
-      const image = fabric.util.groupSVGElements(objects, options);
-      image.set({
-        left: 10,
-        top: 10,
-        angle: 0,
-        padding: 10,
-        cornerSize: 10,
-        hasRotatingPoint: true,
-      });
-      this.extend(image, this.randomId());
-      this.canvas.add(image);
-      this.selectItemAfterAdded(image);
-    });
-  }
-
-  // Block "Upload Image"
-
-  addImageOnCanvas(url) {
-    if (url) {
-      fabric.Image.fromURL(url, (image) => {
-        image.set({
-          left: 10,
-          top: 10,
-          angle: 0,
-          padding: 10,
-          cornerSize: 10,
-          hasRotatingPoint: true
-        });
-        image.scaleToWidth(200);
-        image.scaleToHeight(200);
-        this.extend(image, this.randomId());
-        this.canvas.add(image);
-        this.selectItemAfterAdded(image);
-      });
-    }
-  }
-
-  readUrl(event) {
-    if (event.target.files && event.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (readerEvent) => {
-        this.url = readerEvent.target.result;
-      };
-      reader.readAsDataURL(event.target.files[0]);
-    }
-  }
-
-  removeWhite(url) {
-    this.url = '';
-  }
-
   // Block "Add figure"
 
   addFigure(figure) {
@@ -204,23 +149,35 @@ export class FabricjsEditorComponent implements AfterViewInit {
       case 'rectangle':
         add = new fabric.Rect({
           width: 200, height: 100, left: 10, top: 10, angle: 0,
-          fill: '#3f51b5'
+          fill: '#3f51b5', 
+          borderColor:'#e00000', 
+          hasBorders: true,
+          borderScaleFactor: 3
         });
         break;
       case 'square':
         add = new fabric.Rect({
           width: 100, height: 100, left: 10, top: 10, angle: 0,
-          fill: '#4caf50'
+          fill: '#4caf50',
+          borderColor:'#e00000', 
+          hasBorders: true,
+          borderScaleFactor: 3
         });
         break;
       case 'triangle':
         add = new fabric.Triangle({
-          width: 100, height: 100, left: 10, top: 10, fill: '#2196f3'
+          width: 100, height: 100, left: 10, top: 10, fill: '#2196f3',
+          borderColor:'#e00000', 
+          hasBorders: true,
+          borderScaleFactor: 3
         });
         break;
       case 'circle':
         add = new fabric.Circle({
-          radius: 50, left: 10, top: 10, fill: '#ff5722'
+          radius: 50, left: 10, top: 10, fill: '#ff5722',
+          borderColor:'#e00000', 
+          hasBorders: true,
+          borderScaleFactor: 3
         });
         break;
     }
@@ -229,7 +186,7 @@ export class FabricjsEditorComponent implements AfterViewInit {
     this.selectItemAfterAdded(add);
   }
 
-  /*Canvas*/
+  /*Canvas*/ 
 
   cleanSelect() {
     this.canvas.discardActiveObject().renderAll();
@@ -403,6 +360,7 @@ export class FabricjsEditorComponent implements AfterViewInit {
     };
   }
 
+
   getOpacity() {
     this.props.opacity = this.getActiveStyle('opacity', null) * 100;
   }
@@ -548,28 +506,22 @@ export class FabricjsEditorComponent implements AfterViewInit {
   }
 
   confirmClear() {
-    if (confirm('Are you sure?')) {
+    if (confirm('Estas seguro de que deseas limpiar el lienzo?')) {
       this.canvas.clear();
     }
   }
-
-  rasterize() {
-    const image = new Image();
-    image.src = this.canvas.toDataURL({format: 'png'});
-    const w = window.open('');
-    w.document.write(image.outerHTML);
+  
+  nuevaFigura(figure) {
+    if (confirm('Estas seguro de que deseas agregar una nueva figura de tipo '+figure+' al lienzo?')) {
+      this.addFigure(figure);
+    }
   }
 
-  rasterizeSVG() {
-    const w = window.open('');
-    w.document.write(this.canvas.toSVG());
-    return 'data:image/svg+xml;utf8,' + encodeURIComponent(this.canvas.toSVG());
-  }
 
   saveCanvasToJSON() {
     const json = JSON.stringify(this.canvas);
     localStorage.setItem('Kanvas', json);
-    console.log('json');
+    console.log('json guardado');
     console.log(json);
 
   }
@@ -588,7 +540,7 @@ export class FabricjsEditorComponent implements AfterViewInit {
       this.canvas.renderAll();
 
       // and checking if object's "name" is preserved
-      console.log('this.canvas.item(0).name');
+      console.log('CHECKING: '+'this.canvas.item(0).name');
       console.log(this.canvas);
     });
 
